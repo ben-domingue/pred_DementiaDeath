@@ -1,6 +1,6 @@
 
 
-bigfun<-function(df,st,allmodels=TRUE,nfold=10) {
+bigfun<-function(df,allmodels=TRUE,nfold=10) {
     ##
     predfun<-function(x,allmodels) {
         x$inter<-x$age*x$cog #for splines
