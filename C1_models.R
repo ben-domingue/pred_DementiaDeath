@@ -15,7 +15,7 @@ maketab<-function(df) {
     tmp<-data.frame(do.call("rbind",L))
     tab<-proc(tmp) #zz<-lapply(L,proc) #no extenion: apm quantites, .1=p^m, .2=win
     tab$van.1-tab$base.1 -> tab$delta
-    tab2<-tab[,c("base.1","van","delta","van.2")]
+    tab2<-tab[,c("prev","base","base.1","van","van.1","delta","van.2")]
     tab2
 }
 tab<-maketab(df)

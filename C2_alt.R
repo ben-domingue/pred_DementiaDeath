@@ -1,10 +1,38 @@
-source("/home/bd/Dropbox/projects/hrs/cognition_attrition/src/00_bigfun.R")
-load(file="/home/bd/Dropbox/projects/hrs/cognition_attrition/wd/df.Rdata")
 
 ########################################################################################
-##baseline
-df$hs<-ifelse(df$raedyrs>=12,1,0)
-df$college<-ifelse(df$raedyrs>=16,1,0)
+#df$hs<-ifelse(df$raedyrs>=12,1,0)
+#df$college<-ifelse(df$raedyrs>=16,1,0)
+source("/home/bd/Dropbox/projects/hrs/cognition_attrition/src/00_bigfun.R")
+load(file="/home/bd/Dropbox/projects/hrs/cognition_attrition/wd/df.Rdata")
+#df<-df[df$wave %in% 5:6,]
+
+df$raedyrs -> df$cog
+df<-df[!is.na(df$cog),]
+
+
+maketab<-function(df) {
+    L<-list()
+    for (st in c("proxy","attrit","dead")) {
+        tmp<-df[df$status %in% c(st,"eligible"),]
+        tmp$status<-ifelse(tmp$status==st,1,0)
+        print(st)
+        L[[st]]<-bigfun(tmp,allmodels=TRUE)
+    }
+    tmp<-data.frame(do.call("rbind",L))
+    tab<-proc(tmp) #zz<-lapply(L,proc) #no extenion: apm quantites, .1=p^m, .2=win
+    #tab$van.1-tab$base.1 -> tab$delta
+    #tab2<-tab[,c("base.1","van","delta","van.2","std.2","spl.2")]
+    #tab2
+    tab
+}
+tab<-maketab(df)
+library(xtable)
+ii<-grep(".2",names(tab),fixed=TRUE)
+print(xtable(tab[,ii],digits=4),include.rownames=TRUE)
+
+########################################################################################
+source("/home/bd/Dropbox/projects/hrs/cognition_attrition/src/00_bigfun.R")
+load(file="/home/bd/Dropbox/projects/hrs/cognition_attrition/wd/df.Rdata")
 df$iad<-ifelse(df$iadl>0,1,0)
 df$dep<-ifelse(df$cesd>=4,1,0)
 
@@ -16,7 +44,7 @@ df<-merge(df,tmp,all.x=TRUE)
 
 maketab<-function(df) {
     L<-list()
-    for (st in c("hs","college","iad","dep")) {
+    for (st in c("iad","dep")) {
         tmp<-df[!is.na(df[[st]]),]
         tmp$status<-tmp[[st]]
         print(st)
@@ -25,9 +53,10 @@ maketab<-function(df) {
     }
     tmp<-data.frame(do.call("rbind",L))
     tab<-proc(tmp) #zz<-lapply(L,proc) #no extenion: apm quantites, .1=p^m, .2=win
-    tab$van.1-tab$base.1 -> tab$delta
-    tab2<-tab[,c("base.1","van","delta","van.2","std.2","spl.2")]
-    tab2
+    #tab$van.1-tab$base.1 -> tab$delta
+    #tab2<-tab[,c("base.1","van","delta","van.2","std.2","spl.2")]
+    #tab2
+    tab
 }
 tab<-maketab(df)
 library(xtable)

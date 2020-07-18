@@ -62,7 +62,7 @@ bigfun<-function(df,allmodels=TRUE,nfold=10) {
     mat<-colMeans(mat) 
     names(mat)<-c("base","van","std","spl")[1:length(mat)]
     ##
-    mat
+    c(prevalence=mean(df$status,na.rm=TRUE),mat)
 }
 
 
@@ -73,6 +73,8 @@ getp<-function(a) {
 
 proc<-function(x) {
     #
+    x$prevalence->prev
+    NULL->x$prevalence
     gp<-Vectorize(getp)
     p<-list()
     for (i in 1:ncol(x)) p[[colnames(x)[i] ]]<-gp(x[,i])
@@ -82,6 +84,6 @@ proc<-function(x) {
     allmod<-c("van","std","spl")
     test<-allmod %in% names(p)
     for (nm in allmod[test]) w[[nm]]<-bet(p[[nm]],p$base)
-    data.frame(x,p,w)
+    data.frame(prev,x,p,w)
 }
 
